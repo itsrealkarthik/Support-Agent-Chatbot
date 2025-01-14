@@ -1,13 +1,13 @@
 # Support Agent Chatbot
 
-This application allows users to enter queries related to specific documentation (mParticle, Lytics, Segment, Zeotap). It uses web scraping and NLP models to provide summarized answers to the user's queries.
+This application allows users to enter queries related to specific documentation (mParticle, Lytics, Segment, Zeotap). It uses web scraping and NLP/LLM models to provide summarized answers to the user's queries.
 
 ## How It Works
 
 1. **User Input:** The user enters a query in the web interface.
 2. **Keyword Validation:** The application checks if the query contains any valid keywords.
-3. **Web Search and Scraping:** If the query is valid, the application uses SerpAPI to search the web and scrapes content from the top 10 results using BeautifulSoup.
-4. **Summarization:** The scraped content is concatenated with the conversation history and passed to the Hugging Face Transformers summarization model to generate a descriptive answer.
+3. **Web Search and Scraping:** If the query is valid, the application uses SerpAPI to search the web and scrapes content from the top results using BeautifulSoup.
+4. **Summarization:** The scraped content is concatenated with the conversation history and passed to the NLP/LLM summarization model to generate a descriptive answer.
 5. **Response:** The summarized answer is displayed to the user.
 
 ## Example Queries
@@ -21,7 +21,7 @@ This application allows users to enter queries related to specific documentation
 - **Flask**: A lightweight WSGI web application framework in Python.
 - **BeautifulSoup**: A library for parsing HTML and XML documents.
 - **SerpAPI**: A real-time API to access search engine results.
-- **Hugging Face Transformers**: A library for state-of-the-art NLP models.
+- **Google Gemini API**: A library for state-of-the-art LLM models.
 - **Requests**: A simple HTTP library for Python.
 
 ## Project Structure
@@ -53,9 +53,14 @@ Install the required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-Set up your SerpAPI key:
+## Get API keys
+Go to [Serp API](https://serpapi.com/), log in, and obtain your API key.
 
-- Replace the placeholder `SERPAPI_KEY` in scraper.py with your actual SerpAPI key.
+Go to [Gemini API](https://ai.google.dev/gemini-api/docs/api-key), log in, and obtain your API key.
+
+Set up your API keys:
+
+- Create an `.env` file and place your `SERP_API` and `GEMINI_API` in the file.
 
 ## Usage
 Run the Flask application:
