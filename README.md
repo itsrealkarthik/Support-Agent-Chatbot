@@ -85,6 +85,6 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 - [Flask](https://flask.palletsprojects.com/)
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
 - [SerpAPI](https://serpapi.com/)
-- [Hugging Face Transformers](https://huggingface.co/transformers/)
+- [Google Gemini](https://ai.google.dev/gemini-api/docs/api-key)
 - [Requests](https://docs.python-requests.org/en/master/)
 
