@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation Query Bot</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.3.0/alpine.js"></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen" x-data="{ loading: false }">
     <div class="container mx-auto px-4 py-16 max-w-2xl">
-        <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="bg-white rounded-xl shadow-xl p-8">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">Documentation Assistant</h1>
+                <h1 class="text-4xl font-bold text-gray-800 mb-3">Documentation Assistant</h1>
                 <p class="text-gray-600">Get quick answers to your documentation questions</p>
             </div>
 
-            <form method="POST" class="space-y-6">
+            <form method="POST" class="space-y-6" 
+                  @submit="loading = true">
                 <div class="relative">
                     <label for="query" class="block text-sm font-medium text-gray-700 mb-2">
                         What would you like to know?
@@ -24,16 +26,24 @@
                         id="query" 
                         name="query" 
                         required
-                        class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm"
                         placeholder="Enter your question here..."
                     >
                 </div>
 
                 <button 
                     type="submit"
-                    class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out font-medium"
+                    class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                    :disabled="loading"
                 >
-                    Search Documentation
+                    <span x-show="!loading">Search Documentation</span>
+                    <div x-show="loading" class="flex items-center justify-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                    </div>
                 </button>
             </form>
 
@@ -41,7 +51,15 @@
             <div class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Answer</h2>
                 <div class="prose text-gray-700">
-                    {{ answer }}
+                    {{ answer|safe }}
+                </div>
+                <div class="mt-4 text-sm text-gray-500 border-t pt-4">
+                    <p class="flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        If you didn't get the intended answer, please try rephrasing your question and retry.
+                    </p>
                 </div>
             </div>
             {% endif %}

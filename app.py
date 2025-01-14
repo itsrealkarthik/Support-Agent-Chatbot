@@ -1,16 +1,16 @@
 from flask import Flask, render_template, request
 from scraper import search_and_scrape
-from transformers import pipeline
+import google.generativeai as genai
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
+load_dotenv()
 
-# Initialize the NLP model for summarization
-summarization_model = pipeline("summarization", model="t5-small")
+genai.configure(api_key=os.getenv('GEMINI_API'))
+model = genai.GenerativeModel('gemini-pro')
 
-# Keywords for validation
 valid_keywords = ["mparticle", "lytics", "segment", "zeotap"]
-
-# To store conversation history (user input + bot response)
 conversation_history = []
 
 @app.route("/", methods=["GET", "POST"])
@@ -21,27 +21,41 @@ def index():
     if request.method == "POST":
         query = request.form["query"]
         
-        # Add user's query to conversation history
         conversation_history.append(f"User: {query}")
         
-        # Check if the query contains valid keywords
         if any(keyword.lower() in query.lower() for keyword in valid_keywords):
-            # Search using SerpAPI and scrape content from first 10 webpages
             scraped_data = search_and_scrape(query)
-            print(scraped_data)
             
             if scraped_data:
-                # Concatenate conversation history and scraped content for context
-                context = " ".join(conversation_history) + " " + " ".join(scraped_data)
-                
-                # Use Summarization model to generate a descriptive answer based on the context
-                summarized_answer = summarization_model(context, min_length=50, max_length=300)
-                
-                # Get the first summarized answer (in case the model returns a list)
-                answer = summarized_answer[0]['summary_text']
-                
-                # Store bot's response in the conversation history
-                conversation_history.append(f"Bot: {answer}")
+                try:
+                    prompt = f"""
+                    You are an expert in providing precise and contextually relevant answers to queries related to Segment, mParticle, Zeotap, and Lytics. Based on the provided query and scraped data:
+
+                    1. If the query is directly relevant to Segment, mParticle, Zeotap, or Lytics, analyze the scraped data to generate a comprehensive and accurate answer in **neatly formatted HTML** that is ready to render.
+
+                    2. If the query is not relevant to these topics, return the error message: **"Please ask related questions only."**
+
+                    Format the response strictly in HTML. Do not include unnecessary or irrelevant details. Use proper HTML tags for structure (e.g., `<html>`, `<body>`, `<h1>`, `<p>`). 
+
+                    Inputs:
+                    - User Query: {query}
+                    - Scraped Data: {scraped_data}
+                    - Previous Conversation Context (last 5): {conversation_history}
+
+                    Output:
+                    - A neatly formatted HTML response.
+
+                    """
+                    
+                    response = model.generate_content(prompt)
+                    
+                    answer = response.text
+                    answer = answer.replace("```html", "").replace("```", "").strip()
+
+                    conversation_history.append(f"Bot: {answer}")
+                except Exception as e:
+                    answer = f"An error occurred while processing your request: {str(e)}"
+                    conversation_history.append(f"Bot: {answer}")
             else:
                 answer = "Sorry, no relevant content found."
                 conversation_history.append(f"Bot: {answer}")
