@@ -41,8 +41,8 @@ This application allows users to enter queries related to specific documentation
 ## Installation
 Clone the repository:
 ```bash
-git clone https://github.com/yourusername/web-scraper-summarizer.git
-cd web-scraper-summarizer
+git clone https://github.com/itsrealkarthik/Support-Agent-Chatbot.git
+cd Support-Agent-Chatbot
 ```
 Create and activate a virtual environment:
 ```bash
